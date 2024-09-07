@@ -2,18 +2,12 @@ import { QueryResult } from "pg";
 import { pool as db } from "../db/db.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-type user = {
-  id: number;
-  email: string;
-  password: string;
-  money: number;
-  roleId: number;
-};
+import { User } from "../types/types.js";
 
 class AuthService {
   async createUser(email: string, password: string) {
     const hashPssword = await bcrypt.hash(password, 5);
-    const user: QueryResult<user> = await db.query(
+    const user: QueryResult<User> = await db.query(
       "INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *",
       [email, hashPssword]
     );
@@ -21,23 +15,25 @@ class AuthService {
   }
 
   async findUser(email: string) {
-    const user: QueryResult<user> = await db.query(
+    const user: QueryResult<User> = await db.query(
       "SELECT * FROM users WHERE email = $1",
       [email]
     );
 
     return user.rows[0];
   }
-  async generateAccessToken(id: number, roleId: number, email: string) {
+  async generateAccessToken(id: number, roleid: number, email: string) {
     const token = jwt.sign(
       {
-        id,
-        roleId,
-        email,
+        id: id,
+        roleid: roleid,
+        email: email,
       },
       process.env.ACCESS_TOKEN_SECRET as string,
       { expiresIn: "2h" }
     );
+    console.log(token);
+
     return token;
   }
 }

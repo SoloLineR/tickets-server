@@ -45,6 +45,7 @@ class AuthController {
         message: "Wrong email",
       });
     }
+    console.log(user);
 
     const isPasswordValid = await bycrypt.compare(password, user.password);
     if (!isPasswordValid) {
@@ -54,16 +55,19 @@ class AuthController {
     }
     const accessToken = await authService.generateAccessToken(
       user.id,
-      user.roleId,
+      user.roleid,
       user.email
     );
 
     res.status(200).json({
       accessToken,
+      userid: user.id,
+      email: user.email,
+      roleid: user.roleid,
     });
   }
 
-  async logout(req: Request, res: Response) {
+  async logout(_req: Request, res: Response) {
     res.status(200).json({ message: "Logout successful" });
   }
 }

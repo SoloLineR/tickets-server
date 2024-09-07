@@ -9,7 +9,7 @@ const app = express();
 
 const PORT = process.env.PORT;
 app.use(express.json());
-app.use(cors());
+app.use(cors({ credentials: true }));
 app.use(cookieParser());
 app.use("/api", authRouter);
 app.use("/api", ticketRouter);

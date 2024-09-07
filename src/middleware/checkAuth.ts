@@ -16,6 +16,7 @@ export default async function checkAuth(
     token,
     process.env.ACCESS_TOKEN_SECRET as string
   ) as DataStoredInToken;
+  console.log(user, "user");
 
   if (user) {
     req.user = user;

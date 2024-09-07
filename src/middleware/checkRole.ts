@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { DataStoredInToken } from "../types/types.js";
 export default function checkRole(
   req: Request,
   res: Response,
@@ -10,18 +11,18 @@ export default function checkRole(
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  jwt.verify(
+  const user = jwt.verify(
     token,
-    process.env.ACCESS_TOKEN_SECRET as string,
-    (err, user: any) => {
-      if (err) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-      if (user?.roleId !== 2) {
-        res.status(403).json({ message: "Access denied" });
-      }
-    }
-  );
+    process.env.ACCESS_TOKEN_SECRET as string
+  ) as DataStoredInToken;
+  console.log(user, "user");
 
-  next();
+  console.log(Number(user.roleid) == 2, "role");
+
+  if (user.roleid == 2) {
+    req.user = user;
+    next();
+  } else {
+    return res.status(401).json({ message: "not admin" });
+  }
 }
