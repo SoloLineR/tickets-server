@@ -56,5 +56,17 @@ class TicketsController {
     }
     res.status(200).json(updatedTicket);
   }
+
+  async buyTicket(req: Request, res: Response) {
+    try {
+      const userid = req.user?.id;
+      const { id } = req.params;
+
+      const ticket = await ticketService.buyTicket(Number(id), Number(userid));
+      return res.status(200).json({ message: `${ticket.title} Ticket bought` });
+    } catch (error) {
+      return res.status(404).json({ message: "cant buy" });
+    }
+  }
 }
 export default new TicketsController();

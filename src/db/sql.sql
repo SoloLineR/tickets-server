@@ -16,7 +16,8 @@ CREATE TABLE tickets (
     title VARCHAR(255) NOT NULL,   
     description TEXT,   
     price INTEGER NOT NULL CHECK (price >= 0),   
-    amount INTEGER NOT NULL CHECK (amount >= 0)   
+    amount INTEGER NOT NULL CHECK (amount >= 0),
+    img VARCHAR(255) 
 );
 
 CREATE TABLE ticketsToUsers (  

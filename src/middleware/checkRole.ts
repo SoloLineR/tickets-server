@@ -15,9 +15,6 @@ export default function checkRole(
     token,
     process.env.ACCESS_TOKEN_SECRET as string
   ) as DataStoredInToken;
-  console.log(user, "user");
-
-  console.log(Number(user.roleid) == 2, "role");
 
   if (user.roleid == 2) {
     req.user = user;

@@ -14,5 +14,5 @@ router.patch(
   checkRole,
   ticketController.updateTicket
 );
-// router.post("/ticket/:id", checkAuth, ticketController.buyTicket);
+router.post("/ticket/:id", checkAuth, ticketController.buyTicket);
 export default router;

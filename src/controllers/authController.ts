@@ -45,7 +45,6 @@ class AuthController {
         message: "Wrong email",
       });
     }
-    console.log(user);
 
     const isPasswordValid = await bycrypt.compare(password, user.password);
     if (!isPasswordValid) {

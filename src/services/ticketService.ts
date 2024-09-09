@@ -40,6 +40,23 @@ class TicketService {
     );
     return ticket.rows[0];
   }
+
+  async buyTicket(id: number, userId: number) {
+    try {
+      const updatedTicket = await db.query(
+        "UPDATE tickets SET amount = amount - 1 WHERE id = $1 RETURNING *",
+        [id]
+      );
+      db.query(
+        "INSERT INTO ticketsToUsers (userID, ticketID) VALUES ($1, $2)",
+        [userId, id]
+      );
+
+      return updatedTicket.rows[0];
+    } catch (err) {
+      throw err;
+    }
+  }
 }
 
 export default new TicketService();
