@@ -23,5 +23,5 @@ CREATE TABLE tickets (
 CREATE TABLE ticketsToUsers (  
     userID INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,   
     ticketID INTEGER NOT NULL REFERENCES tickets(id) ON DELETE CASCADE,  
-    PRIMARY KEY (userID, ticketID)   
+    
     )  

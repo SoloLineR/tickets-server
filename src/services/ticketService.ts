@@ -42,19 +42,38 @@ class TicketService {
   }
 
   async buyTicket(id: number, userId: number) {
+    const client = await db.connect();
+
     try {
-      const updatedTicket = await db.query(
+      const ticket = await this.getTicketById(id);
+
+      client.query(" BEGIN; ");
+
+      await client.query("UPDATE users SET money = money - $1 WHERE id = $2", [
+        ticket.price,
+        userId,
+      ]);
+      await client.query("UPDATE users SET money = money + $1 WHERE id = $2", [
+        ticket.price,
+        1,
+      ]);
+
+      const updatedTicket = await client.query(
         "UPDATE tickets SET amount = amount - 1 WHERE id = $1 RETURNING *",
         [id]
       );
-      db.query(
+      client.query(
         "INSERT INTO ticketsToUsers (userID, ticketID) VALUES ($1, $2)",
         [userId, id]
       );
+      await client.query("COMMIT; ");
 
       return updatedTicket.rows[0];
     } catch (err) {
+      await client.query("ROLLBACK;");
       throw err;
+    } finally {
+      client.release();
     }
   }
 }
