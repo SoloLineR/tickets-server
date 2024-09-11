@@ -23,5 +23,7 @@ CREATE TABLE tickets (
 CREATE TABLE ticketsToUsers (  
     userID INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,   
     ticketID INTEGER NOT NULL REFERENCES tickets(id) ON DELETE CASCADE,  
-    
+    isActivated BOOLEAN NOT NULL DEFAULT false,  
+    activated_id TEXT
+
     )  

@@ -1,4 +1,5 @@
 import { pool as db } from "../db/db.js";
+import { v4 as uuidv4 } from "uuid";
 class TicketService {
   async getAllTickets() {
     const tickets = await db.query("SELECT * FROM tickets");
@@ -63,8 +64,8 @@ class TicketService {
         [id]
       );
       client.query(
-        "INSERT INTO ticketsToUsers (userID, ticketID) VALUES ($1, $2)",
-        [userId, id]
+        "INSERT INTO ticketsToUsers (userID, ticketID, activated_id ) VALUES ($1, $2, $3)",
+        [userId, id, uuidv4()]
       );
       await client.query("COMMIT; ");
 
@@ -75,6 +76,25 @@ class TicketService {
     } finally {
       client.release();
     }
+  }
+
+  async getUserBoughtTickets(userId: number) {
+    const tickets = await db.query(
+      `SELECT
+    t.title AS title,
+    t.price AS price,
+    t.img AS img,
+    ttu.userid AS userid,
+    ttu.activated_id AS activated_id
+FROM
+    ticketstousers ttu
+JOIN
+    tickets t ON t.id = ttu.ticketid
+WHERE
+    ttu.userid = $1; `,
+      [userId]
+    );
+    return tickets.rows;
   }
 }
 
