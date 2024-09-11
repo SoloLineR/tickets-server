@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-
+import pdfService from "../services/pdfService/pdfService.js";
 import ticketService from "../services/ticketService.js";
 class TicketsController {
   async getAllTickets(_req: Request, res: Response) {
