@@ -3,6 +3,6 @@ import checkAuth from "../middleware/checkAuth.js";
 import pdfController from "../controllers/pdfController.js";
 const router = Router();
 
-router.get("/pdf/:id", checkAuth, pdfController.getTicketPdf);
-
+router.post("/pdf", checkAuth, pdfController.getTicketPdf);
+router.post("/pdf/validate", checkAuth, pdfController.validateQrCodeFromPdf);
 export default router;

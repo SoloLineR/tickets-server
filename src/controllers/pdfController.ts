@@ -1,12 +1,16 @@
 import { Request, Response } from "express";
 import ticketService from "../services/ticketService.js";
 import pdfService from "../services/pdfService/pdfService.js";
+
 class PDFcontroller {
   async getTicketPdf(req: Request, res: Response) {
-    const ticketId = req.params.id;
     const user = req?.user;
-    const ticket = await ticketService.getTicketById(Number(ticketId));
-    if (!ticket || !user) {
+    const activated_id = req.body.activated_id;
+    const ticketWithActivationId = await ticketService.getTicketByActivationId(
+      activated_id
+    );
+
+    if (!ticketWithActivationId || !user) {
       return res.status(404).json({ message: "Ticket not found" });
     }
 
@@ -15,11 +19,22 @@ class PDFcontroller {
       "Content-disposition": "attachment; filename=qr.pdf",
     });
     pdfService.generatePDF(
-      ticket,
+      ticketWithActivationId,
       user,
       (chunk: Buffer) => stream.write(chunk),
       () => stream.end()
     );
+  }
+
+  async validateQrCodeFromPdf(req: Request, res: Response) {
+    const activated_id = req.body.activated_id;
+    console.log(req.body);
+
+    const resultOfValidation = await ticketService.valiadateTicket(
+      activated_id
+    );
+
+    return res.status(200).json({ message: resultOfValidation });
   }
 }
 

@@ -96,6 +96,45 @@ WHERE
     );
     return tickets.rows;
   }
+  async getTicketByActivationId(id: string) {
+    const ticket = await db.query(
+      `SELECT
+    t.title AS title,
+    t.price AS price,
+    t.img AS img,
+    ttu.userid AS userid,
+    ttu.activated_id AS activated_id,
+    ttu.isactivated as isactivated
+FROM
+    ticketstousers ttu
+JOIN
+    tickets t ON t.id = ttu.ticketid
+WHERE
+    ttu.activated_id = $1;`,
+      [id]
+    );
+    return ticket.rows[0];
+  }
+
+  async valiadateTicket(id: string) {
+    try {
+      const ticket = await this.getTicketByActivationId(id);
+      {
+        if (!ticket.isactivated) {
+          db.query(
+            "UPDATE ticketstousers SET isactivated = true WHERE activated_id = $1",
+            [id]
+          );
+          return "validated";
+        } else {
+          return "error already validated";
+        }
+      }
+    } catch (err) {
+      ``;
+      console.log(err);
+    }
+  }
 }
 
 export default new TicketService();
